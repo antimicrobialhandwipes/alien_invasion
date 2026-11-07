@@ -41,7 +41,8 @@ def run_game():
         Available at: https://www.youtube.com/shorts/rBcW3HtCiN8 (Accessed: 04 November 2026)
     """
 
-    # 100 Sparkles Generated: [x_position, y_position, radius (1-3)]
+    # 100 Sparkles:
+    # Formatted [x_position, y_position, radius (1-3)]
     sparkles = [[random.randint(0, ai_settings.screen_width),
                  random.randint(0, ai_settings.screen_height),
                  random.randint(1, 3)] for _ in range(ai_settings.sparkle_count)]

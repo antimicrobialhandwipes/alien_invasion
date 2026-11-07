@@ -1,3 +1,5 @@
+# Reference for Sparkles (from the Youtube Short)
+
 import pygame
 import random
 import sys
