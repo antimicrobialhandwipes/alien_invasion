@@ -1,5 +1,5 @@
 # Alien Invasion Preview
-![project preview](images/project%20preview.png)
+![project preview](images/project_preview.png)
 
 ## Run
     pip install pygame
