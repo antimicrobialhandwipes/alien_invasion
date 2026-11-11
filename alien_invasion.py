@@ -35,7 +35,6 @@ def run_game():
     gf.create_fleet(ai_settings, screen, ship, aliens)
 
     """
-        Not included in the base project: Sparkles
         Reference | Citation (YouTube Shorts):
         Sparkling stars background using pygame in Python (2024) YouTube. 
         Available at: https://www.youtube.com/shorts/rBcW3HtCiN8 (Accessed: 04 November 2026)
@@ -52,9 +51,9 @@ def run_game():
         gf.check_events(ai_settings, screen, stats, ship, aliens, bullets, debug_button)
         if stats.game_active:
             ship.update()
-            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+            gf.update_bullets(ai_settings, screen, stats, ship, aliens, bullets)
             gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
-        gf.update_screen(ai_settings, screen, ship, aliens, sparkles, bullets, debug_button)
+        gf.update_screen(ai_settings, screen, stats, ship, aliens, sparkles, bullets, debug_button)
         clock.tick(ai_settings.fps)
 
 run_game()

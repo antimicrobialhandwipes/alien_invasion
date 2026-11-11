@@ -1,5 +1,11 @@
 import pygame
 
+"""
+    Reference | Citation (GeeksforGeeks):
+    GeeksforGeeks. (2020, April 23). How to create buttons in a game using PyGame? GeeksforGeeks. 
+    Available at: https://www.geeksforgeeks.org/python/how-to-create-buttons-in-a-game-using-pygame/ (Accessed: 06 November 2026)
+"""
+
 class DebugButton:
     """A button that skips a level; for debugging"""
 
@@ -8,7 +14,7 @@ class DebugButton:
         self.color = (200, 200, 200)
         self.font = pygame.font.SysFont("consolas", 20, 24) #console font
 
-        # Top-right corner
+        # Bottom-right corner
         self.rect = pygame.Rect(0, 0, 100, 30)
         self.rect.bottomright = (ai_settings.screen_width - 50, ai_settings.screen_height - 45)
 

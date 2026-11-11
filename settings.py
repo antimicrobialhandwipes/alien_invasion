@@ -14,8 +14,8 @@ class Settings:
         self.sparkle_color = 255, 255, 255
 
         # Ship settings
-        self.ship_speed_factor = 5.5
-        self.ship_limit = 3 # 4 lives
+        self.ship_speed_factor = 4
+        self.ship_limit = 2
 
         # Bullet Settings
         self.bullet_speed_factor = 8
@@ -29,3 +29,13 @@ class Settings:
         self.fleet_drop_speed = 2
         # fleet_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1
+
+        # Boss alien settings
+        self.waves_before_boss = 3
+        self.boss_images = ["images/alien_boss_1.png", "images/alien_boss_2.png", "images/alien_boss_3.png"]
+        self.boss_speed_factor = 6
+        self.boss_hp = 10
+        self.boss_strafe_delay = 20  # Strafes every third of a second (1 sec = 60 fps)
+        self.boss_drop_speed = 20
+        self.boss_bar_color = "#2ecc40"
+        self.boss_bar_back = "#5c1a1a"

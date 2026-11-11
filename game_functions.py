@@ -4,6 +4,7 @@ import pygame
 
 from time import sleep
 from alien import Alien
+from boss_alien import BossAlien
 from bullet import Bullet
 
 # Event Functions
@@ -37,6 +38,9 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
         ship.moving_down = True
     elif event.key == pygame.K_SPACE:
         fire_bullet(ai_settings, screen, ship, bullets)
+    elif event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+        pygame.quit()
+        sys.exit()
 
 def check_keyup_events(event, ship):
     """Respond to key releases"""
@@ -61,7 +65,7 @@ def fire_bullet(ai_settings, screen, ship, bullets):
         new_bullet = Bullet(ai_settings, screen, ship)
         bullets.add(new_bullet)
 
-def update_bullets(ai_settings, screen, ship, aliens, bullets):
+def update_bullets(ai_settings, screen, stats, ship, aliens, bullets):
     """Update position of bullets and get rid of old bullets"""
     # Update bullet positions
     bullets.update()
@@ -71,17 +75,32 @@ def update_bullets(ai_settings, screen, ship, aliens, bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-    check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets)
+    check_bullet_alien_collisions(ai_settings, screen, stats, ship, aliens, bullets)
 
-def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
+def check_bullet_alien_collisions(ai_settings, screen, stats, ship, aliens, bullets):
     """Respond to bullet-alien collisions"""
-    # Remove any bullets and aliens that have collided
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    if stats.boss_active:
+        # Remove the bullets only, the boss loses 1 hp for each bullet that hit
+        collisions = pygame.sprite.groupcollide(bullets, aliens, True, False)
+        for boss in aliens.sprites():
+            boss.hp -= len(collisions)
+            if boss.hp <= 0:
+                aliens.remove(boss)
+    else:
+        # Remove any bullets and aliens that have collided
+        collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
 
     if len(aliens) == 0:
-        # Destroy existing bullets and create new fleet
+        # Destroy existing bullets and move on to the next wave
         bullets.empty()
-        create_fleet(ai_settings, screen, ship, aliens)
+        if stats.boss_active:
+            stats.boss_active = False
+            stats.waves_cleared = 0
+        else:
+            stats.waves_cleared += 1
+            if stats.waves_cleared == ai_settings.waves_before_boss:
+                stats.boss_active = True
+        spawn_wave(ai_settings, screen, stats, ship, aliens)
 
 # Alien Fleet Creation Functions
 def create_fleet(ai_settings, screen, ship, aliens):
@@ -95,6 +114,18 @@ def create_fleet(ai_settings, screen, ship, aliens):
     for row_number in range(number_rows):
         for alien_number in range(number_aliens_x):
             create_alien(ai_settings, screen, aliens, alien_number, row_number)
+
+def create_boss(ai_settings, screen, aliens):
+    """Create the boss alien"""
+    boss = BossAlien(ai_settings, screen)
+    aliens.add(boss)
+
+def spawn_wave(ai_settings, screen, stats, ship, aliens):
+    """Create the boss if it's boss time, otherwise a normal fleet"""
+    if stats.boss_active:
+        create_boss(ai_settings, screen, aliens)
+    else:
+        create_fleet(ai_settings, screen, ship, aliens)
 
 def get_number_aliens_x(ai_settings, alien_width):
     """Determine the number of aliens that fit in a row"""
@@ -162,8 +193,8 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         aliens.empty()
         bullets.empty()
 
-        # Create a new fleet and center the ship
-        create_fleet(ai_settings, screen, ship, aliens)
+        # Create a new wave and center the ship
+        spawn_wave(ai_settings, screen, stats, ship, aliens)
         ship.center_ship()
 
          # Pause
@@ -172,7 +203,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         stats.game_active = False
 
 # Drawing Functions
-def update_screen(ai_settings, screen, ship, aliens, sparkles, bullets, debug_button):
+def update_screen(ai_settings, screen, stats, ship, aliens, sparkles, bullets, debug_button):
     screen.fill(ai_settings.bg_color)
 
     # Loops through all 100 sparkles
@@ -189,6 +220,9 @@ def update_screen(ai_settings, screen, ship, aliens, sparkles, bullets, debug_bu
 
     ship.blitme()
     aliens.draw(screen)
+    if stats.boss_active:
+        for boss in aliens.sprites():
+            boss.draw_hp_bar()
     debug_button.draw_button()
 
     # Make the most recent drawn screen visible
