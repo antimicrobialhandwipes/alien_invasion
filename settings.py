@@ -46,11 +46,15 @@ class Settings:
         self.boss_bar_color = "#2ecc40"
         self.boss_bar_back = "#5c1a1a"
 
-        # Tokens + upgrades settings
+        # XP / leveling settings
+        self.xp_per_kill = 1
+        self.xp_per_boss = 30
+        self.xp_per_level = 10
+        self.skill_points_per_level = 1
+
+        # Upgrade settings
         self.ship_speed_inc = 1
         self.bullet_speed_inc = 2
-        self.tokens_gained_boss = 2
-        self.tokens_gained_normal = 1
 
     def load_save(self, data):
         if not ("ship_speed" in data and "bullet_speed" in data):
@@ -62,7 +66,10 @@ class Settings:
 
     def write_save(self, stats):
         data = {
-            "tokens": stats.tokens,
+            "xp": stats.xp,
+            "level": stats.level,
+            "skill_points": stats.skill_points,
+            "waves_cleared": stats.waves_cleared,
             "ship_speed": self.ship_speed,
             "bullet_speed": self.bullet_speed,
         }
