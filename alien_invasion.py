@@ -13,7 +13,7 @@ from boss_alien import BossAlien
 from debug_button import DebugButton
 from delete_save_button import DeleteSaveButton
 from variable_label import VariableLabel
-from upgrade_button import UpgradeButton
+from menu import Menu
 
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
@@ -38,15 +38,8 @@ class AlienInvasion:
         # Make the ships left label
         self.ships_left_label = VariableLabel(self, (20, self.settings.screen_height - 50), "Backup Ships Remaining")
 
-        # Make the tokens label
-        self.tokens_label = VariableLabel(self, (20, 10), "Tokens")
-
-        # Make the upgrade buttons
-        self.ship_speed_label = VariableLabel(self, (200, 10), "Ship Speed")
-        self.ship_speed_button = UpgradeButton(self, (410, 35))
-
-        self.bullet_speed_label = VariableLabel(self, (460, 10), "Bullet Speed")
-        self.bullet_speed_button = UpgradeButton(self, (700, 35))
+        # Make the upgrade menu
+        self.menu = Menu(self)
 
         # Delete Save button
         self.delete_save_button = DeleteSaveButton(self)
@@ -105,17 +98,8 @@ class AlienInvasion:
                     if self.debug_button.is_clicked(event.pos):
                         self.aliens.empty()  # the normal "wave cleared" logic builds the next fleet
 
-                    elif self.ship_speed_button.is_clicked(event.pos):
-                        if self.stats.tokens > 0:
-                            self.stats.tokens -= 1
-                            self.settings.ship_speed += self.settings.ship_speed_inc
-                            self.settings.write_save(self.stats)
-
-                    elif self.bullet_speed_button.is_clicked(event.pos):
-                        if self.stats.tokens > 0:
-                            self.stats.tokens -= 1
-                            self.settings.bullet_speed += self.settings.bullet_speed_inc
-                            self.settings.write_save(self.stats)
+                    elif self.menu.check_click(event.pos):
+                        self.settings.write_save(self.stats)
 
                     elif self.delete_save_button.is_clicked(event.pos):
                         self.settings.delete_save(self.stats)
@@ -183,24 +167,28 @@ class AlienInvasion:
                 boss.hp -= len(collisions)
                 if boss.hp <= 0:
                     self.aliens.remove(boss)
+                    self.stats.add_xp(self.settings.xp_per_boss)
         else:
             # Remove any bullets and aliens that have collided.
             collisions = pygame.sprite.groupcollide(
                     self.bullets, self.aliens, True, True)
 
+            kills = 0
+            for aliens_hit in collisions.values():
+                kills += len(aliens_hit)
+            self.stats.add_xp(kills * self.settings.xp_per_kill)
+
         if not self.aliens:
             # Destroy existing bullets and move on to the next wave
             self.bullets.empty()
-            # boss defeated
             if self.stats.boss_active:
                 self.stats.boss_active = False
                 self.stats.waves_cleared = 0
-                self.stats.tokens += self.settings.tokens_gained_boss
             else:
                 self.stats.waves_cleared += 1
-                self.stats.tokens += self.settings.tokens_gained_normal
                 if self.stats.waves_cleared == self.settings.waves_before_boss:
                     self.stats.boss_active = True
+            self.settings.write_save(self.stats)
             self._spawn_wave()
 
     def _ship_hit(self):
@@ -323,13 +311,7 @@ class AlienInvasion:
         if self.stats.save_exists:
             self.delete_save_button.draw_button()
 
-        self.tokens_label.draw_label(self.stats.tokens) 
-
-        self.ship_speed_label.draw_label(self.settings.ship_speed)
-        self.ship_speed_button.draw_button()
-
-        self.bullet_speed_label.draw_label(self.settings.bullet_speed)
-        self.bullet_speed_button.draw_button()
+        self.menu.draw()
 
         # Make the most recent drawn screen visible
         pygame.display.flip()
