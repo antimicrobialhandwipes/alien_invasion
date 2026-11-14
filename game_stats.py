@@ -14,8 +14,11 @@ class GameStats:
         self.waves_cleared = 0
         self.boss_active = False
         self.ships_left = self.settings.ship_limit
-        self.tokens = 0
         self.save_exists = False
+
+        self.xp = 0
+        self.level = 1
+        self.skill_points = 0
 
         path = Path(self.settings.save_path)
 
@@ -24,5 +27,20 @@ class GameStats:
             with open(path, "r") as f:
                 data = json.load(f)
                 self.settings.load_save(data)
-                if "tokens" in data:
-                    self.tokens = data.get("tokens")
+                self.xp = data.get("xp", 0)
+                self.level = data.get("level", 1)
+                self.skill_points = data.get("skill_points", 0)
+                self.waves_cleared = data.get("waves_cleared", 0)
+
+    def xp_to_next_level(self):
+        """XP needed to level up"""
+        return self.settings.xp_per_level
+
+    def add_xp(self, amount):
+        """Adding XP and levelling up."""
+        self.xp += amount
+
+        while self.xp >= self.xp_to_next_level():
+            self.xp -= self.xp_to_next_level()
+            self.level += 1
+            self.skill_points += self.settings.skill_points_per_level
