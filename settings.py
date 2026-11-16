@@ -49,7 +49,7 @@ class Settings:
         # XP / leveling settings
         self.xp_per_kill = 1
         self.xp_per_boss = 30
-        self.xp_per_level = 10
+        self.xp_per_level = 20
         self.skill_points_per_level = 1
 
         # Upgrade settings

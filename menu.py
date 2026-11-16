@@ -12,11 +12,11 @@ class Menu:
         self.level_label = VariableLabel(ai_game, (20, 10), "Level")
         self.skill_points_label = VariableLabel(ai_game, (160, 10), "Skill Points")
 
-        self.ship_speed_label = VariableLabel(ai_game, (350, 10), "Ship Speed")
-        self.ship_speed_button = UpgradeButton(ai_game, (560, 35))
+        self.ship_speed_label = VariableLabel(ai_game, (400, 10), "Ship Speed")
+        self.ship_speed_button = UpgradeButton(ai_game, (610, 35))
 
-        self.bullet_speed_label = VariableLabel(ai_game, (610, 10), "Bullet Speed")
-        self.bullet_speed_button = UpgradeButton(ai_game, (850, 35))
+        self.bullet_speed_label = VariableLabel(ai_game, (660, 10), "Bullet Speed")
+        self.bullet_speed_button = UpgradeButton(ai_game, (900, 35))
 
     def check_click(self, pos):
         """Spending skill points if an upgrade button was clicked."""
@@ -44,3 +44,4 @@ class Menu:
 
         self.bullet_speed_label.draw_label(self.settings.bullet_speed)
         self.bullet_speed_button.draw_button()
+
