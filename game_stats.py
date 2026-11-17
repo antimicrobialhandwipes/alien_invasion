@@ -30,7 +30,6 @@ class GameStats:
                 self.xp = data.get("xp", 0)
                 self.level = data.get("level", 1)
                 self.skill_points = data.get("skill_points", 0)
-                self.waves_cleared = data.get("waves_cleared", 0)
 
     def xp_to_next_level(self):
         """XP needed to level up"""
