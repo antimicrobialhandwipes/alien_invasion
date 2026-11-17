@@ -31,13 +31,14 @@ class Settings:
         self.bullets_allowed = 5
 
         # Alien settings.
+        self.alien_images = ['images/alien.png', 'images/alien_green.png', 'images/alien_blue.png']
         self.alien_speed = 1
         self.fleet_drop_speed = 2
         # fleet_direction of 1 represents right; -1 represents left.
         self.fleet_direction = 1
 
         # Boss alien settings
-        self.waves_before_boss = 3
+        self.waves_before_boss = 2
         self.boss_images = ["images/alien_boss_1.png", "images/alien_boss_2.png", "images/alien_boss_3.png"]
         self.boss_speed_factor = 8
         self.boss_hp = 30
@@ -55,23 +56,25 @@ class Settings:
         # Upgrade settings
         self.ship_speed_inc = 1
         self.bullet_speed_inc = 2
+        self.bullets_allowed_inc = 2
 
     def load_save(self, data):
-        if not ("ship_speed" in data and "bullet_speed" in data):
+        if not ("ship_speed" in data and "bullet_speed" in data and "bullets_allowed" in data):
             print("Invalid save file; couldn't load and sticking with defaults")
             return
 
         self.ship_speed = data.get("ship_speed")
         self.bullet_speed = data.get("bullet_speed")
+        self.bullets_allowed = data.get("bullets_allowed")
 
     def write_save(self, stats):
         data = {
             "xp": stats.xp,
             "level": stats.level,
             "skill_points": stats.skill_points,
-            "waves_cleared": stats.waves_cleared,
             "ship_speed": self.ship_speed,
             "bullet_speed": self.bullet_speed,
+            "bullets_allowed": self.bullets_allowed
         }
 
         path = Path(self.save_path)

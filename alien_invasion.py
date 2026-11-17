@@ -10,7 +10,6 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from boss_alien import BossAlien
-from debug_button import DebugButton
 from delete_save_button import DeleteSaveButton
 from variable_label import VariableLabel
 from menu import Menu
@@ -31,9 +30,6 @@ class AlienInvasion:
 
         # Create an instance to store game statistics.
         self.stats = GameStats(self)
-
-        # Make a debug button
-        self.debug_button = DebugButton(self)
 
         # Make the ships left label
         self.ships_left_label = VariableLabel(self, (20, self.settings.screen_height - 50), "Backup Ships Remaining")
@@ -95,13 +91,10 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.game_active:
-                    if self.debug_button.is_clicked(event.pos):
-                        self.aliens.empty()  # the normal "wave cleared" logic builds the next fleet
-
-                    elif self.menu.check_click(event.pos):
+                    if self.menu.check_click(event.pos):
                         self.settings.write_save(self.stats)
 
-                    elif self.delete_save_button.is_clicked(event.pos):
+                    elif self.stats.save_exists and self.delete_save_button.is_clicked(event.pos):
                         self.settings.delete_save(self.stats)
 
     def _check_keydown_events(self, event):
@@ -305,8 +298,6 @@ class AlienInvasion:
                 boss.draw_hp_bar()
 
         self.ships_left_label.draw_label(self.stats.ships_left) 
-
-        self.debug_button.draw_button()
 
         if self.stats.save_exists:
             self.delete_save_button.draw_button()
